@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Veladora por Gaza</title>
+  <style>
+    body {
+      margin: 0;
+      background: radial-gradient(circle at center, #000000 0%, #0c0c22 100%);
+      color: white;
+      font-family: monospace;
+      text-align: center;
+      padding: 30px 20px;
+    }
+    .cosmic-frame {
+      max-width: 480px;
+      margin: auto;
+      padding: 25px;
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      border-radius: 15px;
+      box-shadow: 0 0 20px #6cf, 0 0 40px #33aaff44;
+      background: linear-gradient(145deg, #000011, #0a0a1a);
+    }
+    h1 { margin-bottom: 8px; }
+    #mensaje { margin-bottom: 20px; font-size: 1.1em; }
+    .vela-container { display: inline-block; margin: 20px auto; }
+    .pixel-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 6px);
+      grid-gap: 1px;
+      justify-content: center;
+    }
+    .pixel { width: 6px; height: 6px; background-color: transparent; }
+    .llama { background-color: transparent; }
+    .llama.encendida { animation: flame 1s infinite alternate; }
+    @keyframes flame {
+      0% { background-color: #ff9900; }
+      100% { background-color: #ffff66; }
+    }
+    .cera { background-color: #eee; }
+    .base { background-color: #999; }
+    #bandera {
+      width: 100px;
+      margin-top: 30px;
+      animation: flotar 4s ease-in-out infinite;
+      display: none;
+    }
+    @keyframes flotar {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #111;
+      color: white;
+      border: 1px solid #333;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover { background-color: #333; }
+    .social {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin: 8px;
+      font-size: 0.9em;
+      text-decoration: none;
+      color: white;
+      background-color: #222;
+      border: 1px solid #444;
+      padding: 8px 12px;
+      border-radius: 5px;
+    }
+    .social img { height: 20px; width: 20px; }
+    #contador { margin-top: 20px; color: #ccc; }
+    #oracion-privada { margin-top: 20px; font-style: italic; color: #fffd; }
+    #esperanza {
+      margin-top: 25px;
+      font-style: italic;
+      font-size: 0.95em;
+      color: #aaa;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    input[type="text"] {
+      padding: 8px;
+      width: 80%;
+      max-width: 400px;
+      margin-top: 25px;
+      border: none;
+      border-radius: 4px;
+    }
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <div class="cosmic-frame">
+    <h1>🕯️ Veladora por Gaza</h1>
+    <div id="mensaje">Dedícale una oración al pueblo de Gaza 🇵🇸</div>
+
+    <div class="vela-container">
+      <div class="pixel-grid" id="veladora">
+        <div class="pixel llama"></div><div></div><div class="pixel llama"></div><div></div><div class="pixel llama"></div>
+        <div></div><div class="pixel llama"></div><div class="pixel llama"></div><div class="pixel llama"></div><div></div>
+        <div class="pixel llama"></div><div class="pixel llama"></div><div class="pixel llama"></div><div class="pixel llama"></div><div class="pixel llama"></div>
+        <!-- Repite esta línea de cera 30 veces para hacerlo más largo -->
+        <div class="pixel cera"></div><div class="pixel cera"></div><div class="pixel cera"></div><div class="pixel cera"></div><div class="pixel cera"></div>
+        <div class="pixel base"></div><div class="pixel base"></div><div class="pixel base"></div><div class="pixel base"></div><div class="pixel base"></div>
+      </div>
+    </div>
+
+    <button id="encender">Encender veladora</button>
+    <div id="contador">Estas personas han encendido su veladora: <span id="conteo">0</span></div>
+    <input type="text" id="inputOracion" placeholder="Escribe tu oración..." maxlength="120"><br>
+    <button id="publicar">Guardar oración</button>
+    <div id="oracion-privada"></div>
+    <img id="bandera" src="https://upload.wikimedia.org/wikipedia/commons/0/00/Flag_of_Palestine.svg" alt="Bandera Palestina">
+    <div id="esperanza">"Una luz encendida es más fuerte que la oscuridad. Que esta llama sea memoria, resistencia y esperanza."</div>
+
+    <p style="font-size: 0.85em; color: #aaa; margin-top: 25px;">
+      Si se abre un anuncio, ciérralo o dale click atrás para volver a la página
+    </p>
+
+    <div style="margin-top: 10px;">
+      <a class="social" href="#" onclick="compartir('facebook')">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook"> Compartir
+      </a>
+      <a class="social" href="#" onclick="compartir('whatsapp')">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp"> Compartir
+      </a>
+    </div>
+  </div>
+  <script>
+  const llamaPixeles = document.querySelectorAll('.llama');
+  const bandera = document.getElementById('bandera');
+  let encendida = false;
+  let conteo = localStorage.getItem('conteoVelas') || 0;
+  let oracion = localStorage.getItem('oracionPrivada') || '';
+  document.getElementById('conteo').textContent = conteo;
+  document.getElementById('oracion-privada').textContent = oracion ? `"${oracion}"` : '';
+
+  document.getElementById('encender').addEventListener('click', () => {
+    if (encendida) return;
+    encendida = true;
+
+    llamaPixeles.forEach((pixel, i) => {
+      setTimeout(() => pixel.classList.add('encendida'), i * 100);
+    });
+
+    bandera.style.display = 'block';
+    conteo++;
+    localStorage.setItem('conteoVelas', conteo);
+    document.getElementById('conteo').textContent = conteo;
+  });
+
+  document.getElementById('publicar').addEventListener('click', () => {
+    const input = document.getElementById('inputOracion');
+    const texto = sanitize(input.value.trim());
+    if (!texto) return;
+    localStorage.setItem('oracionPrivada', texto);
+    document.getElementById('oracion-privada').textContent = `"${texto}"`;
+    input.value = '';
+  });
+
+  function sanitize(str) {
+    return str.replace(/[&<>"']/g, s => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[s]));
+  }
+
+  function compartir(plataforma) {
+    const url = window.location.href;
+    if (plataforma === 'facebook') {
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+    } else if (plataforma === 'whatsapp') {
+      window.open(`https://wa.me/?text=${encodeURIComponent("Enciendo una veladora por Gaza: " + url)}`, '_blank');
+    }
+  }
+</script>
+
+<!-- Código del anuncio Adsterra agregado directamente -->
+
+
+</body>
+</html>
