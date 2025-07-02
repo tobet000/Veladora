@@ -136,7 +136,7 @@
   const llamaPixeles = document.querySelectorAll('.llama');
   const bandera = document.getElementById('bandera');
   let encendida = false;
-  let conteo = localStorage.getItem('conteoVelas') || 0;
+  let conteo = parseInt(localStorage.getItem('conteoVelas')) || 3354;
   let oracion = localStorage.getItem('oracionPrivada') || '';
   document.getElementById('conteo').textContent = conteo;
   document.getElementById('oracion-privada').textContent = oracion ? `"${oracion}"` : '';
